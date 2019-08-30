@@ -85,7 +85,7 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Това патребителско име или парола не съществува.");
                     return Page();
                 }
             }

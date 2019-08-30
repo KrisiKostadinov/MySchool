@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using MySchool.Data.Models;
+using MySchool.Web.EmailSending;
 
 namespace MySchool.Web.Areas.Identity.Pages.Account
 {
@@ -38,13 +39,13 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Потребителското име е задължително.")]
             [Display(Name = "Потребителско име")]
             public string UserName { get; set; }
 
-            [Required(ErrorMessage = "Това поле е задължително.")]
+            [Required(ErrorMessage = "{0}ът е задължителен.")]
             [EmailAddress(ErrorMessage = "Невалиден имейл адрес.")]
-            [Display(Name = "Email")]
+            [Display(Name = "Имейл")]
             public string Email { get; set; }
 
             [Required(ErrorMessage = "Паролата е задължителна.")]
@@ -85,6 +86,8 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
+                    EmailSender emailSender = new EmailSender();
+                    emailSender.Send(user.Email, "You successfully registered", callbackUrl);
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
