@@ -39,19 +39,23 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
+            [Display(Name = "Потребителско име")]
+            public string UserName { get; set; }
+
+            [Required(ErrorMessage = "Това поле е задължително.")]
+            [EmailAddress(ErrorMessage = "Невалиден имейл адрес.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
+            [Required(ErrorMessage = "Паролата е задължителна.")]
+            [StringLength(100, ErrorMessage = "{0}та трябва дa бъде по малко то {2} и повече от {1} синвола.", MinimumLength = 3)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Парола")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Повторете паролата")]
+            [Compare("Password", ErrorMessage = "Паролите не съвпадат.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -65,7 +69,7 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new MySchoolUser { UserName = Input.Email, Email = Input.Email };
+                var user = new MySchoolUser { UserName = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -86,7 +90,14 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    if (error.Code == "DuplicateEmail")
+                    {
+                        ModelState.AddModelError(error.Code, "Този имейл вече съществува.");
+                    }
+                    else if (error.Code == "DuplicateUserName")
+                    {
+                        ModelState.AddModelError(error.Code, "Това патребителско име вече съществува.");
+                    }
                 }
             }
 
