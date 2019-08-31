@@ -25,9 +25,8 @@
                     <button type="submit" class="btn btn-primary">Log in</button>
                 </div>
                 <div class="form-group">
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Регистрация</a>
-                    </p>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Регистрация</a>
+                    <a class="ml-2" asp-page="./ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl">Забравена парола</a>
                 </div>
             </form>
         </section>

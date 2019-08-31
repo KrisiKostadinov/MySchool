@@ -1,3 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@if (TempData["registered"] != null)
+{
+    <div>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Успешна регистрация!</strong> Благодарим Ви за потвърждаването на имейла!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+}

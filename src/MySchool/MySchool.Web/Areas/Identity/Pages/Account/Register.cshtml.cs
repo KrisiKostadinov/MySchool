@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySchool.Data.Models;
 using MySchool.Web.EmailSending;
@@ -24,18 +25,21 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
             UserManager<MySchoolUser> userManager,
             SignInManager<MySchoolUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            Configuration = configuration;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
 
         public string ReturnUrl { get; set; }
+        public IConfiguration Configuration { get; }
 
         public class InputModel
         {
@@ -86,9 +90,11 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    EmailSender emailSender = new EmailSender();
+                    EmailSender emailSender = new EmailSender(Configuration);
                     emailSender.Send(user.Email, "You successfully registered", callbackUrl);
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    TempData["registered"] = "registered";
+
                     return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)
