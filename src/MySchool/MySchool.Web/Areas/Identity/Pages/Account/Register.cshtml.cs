@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MySchool.Data;
 using MySchool.Data.Models;
 using MySchool.Web.EmailSending;
 
@@ -26,13 +27,17 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
             SignInManager<MySchoolUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            RoleManager<IdentityRole<string>> roleManager,
+            MySchoolContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             Configuration = configuration;
+            RoleManager = roleManager;
+            Context = context;
         }
 
         [BindProperty]
@@ -40,9 +45,16 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
         public IConfiguration Configuration { get; }
+        public MySchoolContext Context { get; }
+
+        public RoleManager<IdentityRole<string>> RoleManager;
 
         public class InputModel
         {
+            [Required(ErrorMessage = "Аз съм полето е задължително.")]
+            [Display(Name = "Аз съм")]
+            public string RegisterAs { get; set; }
+
             [Required(ErrorMessage = "Потребителското име е задължително.")]
             [Display(Name = "Потребителско име")]
             public string UserName { get; set; }
@@ -76,6 +88,35 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
             {
                 var user = new MySchoolUser { UserName = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
+                if (!await RoleManager.RoleExistsAsync("Student"))
+                {
+                    await RoleManager.CreateAsync(new IdentityRole("Student"));
+                }
+                if (!await RoleManager.RoleExistsAsync("Teacher"))
+                {
+                    await RoleManager.CreateAsync(new IdentityRole("Teacher"));
+                }
+                if (!await RoleManager.RoleExistsAsync("Parent"))
+                {
+                    await RoleManager.CreateAsync(new IdentityRole("Parent"));
+                }
+                Context.SaveChanges();
+
+                if (Input.RegisterAs == "Student")
+                {
+                    await _userManager.AddToRoleAsync(user, "Student");
+                }
+                else if (Input.RegisterAs == "Teacher")
+                {
+                    await _userManager.AddToRoleAsync(user, "Teacher");
+                }
+                else if (Input.RegisterAs == "Parent")
+                {
+                    await _userManager.AddToRoleAsync(user, "Parent");
+                }
+
+                Context.SaveChanges();
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
