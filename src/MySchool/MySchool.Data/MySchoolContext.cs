@@ -10,5 +10,14 @@ namespace MySchool.Data
         public MySchoolContext(DbContextOptions options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
+        public DbSet<Teacher> Teachers { get; set; }
+
+        public DbSet<Student> Students { get; set; }
     }
 }

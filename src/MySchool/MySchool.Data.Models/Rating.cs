@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MySchool.Data.Models
 {
-    public class Rating
+    public class Rating : Item
     {
-        [Key]
-        public int Id { get; set; }
-
         public DateTime WritedOn { get; set; }
 
         public string Subject { get; set; }
@@ -19,5 +16,10 @@ namespace MySchool.Data.Models
 
         [NotMapped]
         public MySchoolUser Teacher { get; set; }
+
+        public int StudentId { get; set; }
+
+        [NotMapped]
+        public Student Student { get; set; }
     }
 }

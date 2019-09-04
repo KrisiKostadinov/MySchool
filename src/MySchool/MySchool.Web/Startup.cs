@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MySchool.Data;
 using MySchool.Data.Models;
+using MySchool.Web.Managers;
+using AutoMapper;
+using System;
 
 namespace MySchool.Web
 {
@@ -24,14 +27,7 @@ namespace MySchool.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-            services.AddDbContext<MySchoolContext>(options =>
+            services.AddDbContextPool<MySchoolContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<MySchoolUser, IdentityRole<string>>()
@@ -50,6 +46,9 @@ namespace MySchool.Web
                 options.User.RequireUniqueEmail = true;
             });
 
+            services.AddAutoMapper(new Type[] { typeof(AutoMapper.DomainProfile) });
+            services.AddTransient<ITeacherManager, TeacherManager>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -60,7 +59,7 @@ namespace MySchool.Web
             {
                 using (var context = scope.ServiceProvider.GetService<MySchoolContext>())
                 {
-                    context.Database.EnsureCreated();
+                    context.Database.Migrate();
                 }
             }
             if (env.IsDevelopment())

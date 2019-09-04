@@ -1,0 +1,11 @@
+﻿@model List<TeacherViewModel>
+@{
+    ViewData["Title"] = "AllRatings";
+}
+
+<h1>All teachers</h1>
+@foreach (var item in Model)
+{
+    <h2>@item.Name</h2>
+}
+
