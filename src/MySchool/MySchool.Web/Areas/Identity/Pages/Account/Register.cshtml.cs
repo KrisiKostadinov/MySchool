@@ -107,7 +107,6 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
             {
                 var user = new MySchoolUser { UserName = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
                 AddRoles(user);
 
                 if (result.Succeeded)

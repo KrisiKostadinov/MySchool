@@ -20,6 +20,16 @@ namespace MySchool.Web.Managers
         }
 
         /// <summary>
+        /// Here we add teacher to db.
+        /// </summary>
+        /// <param name="teacher"></param>
+        public void AddTeacher(Teacher teacher)
+        {
+            this.context.Teachers.Add(teacher);
+            this.context.SaveChanges();
+        }
+
+        /// <summary>
         /// Here we get all teachers models and them display in the view.
         /// </summary>
         /// <returns>TeacherViewModels</returns>

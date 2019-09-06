@@ -9,5 +9,7 @@ namespace MySchool.Web.Managers
         Task<List<Teacher>> GetAll();
 
         Task<List<Student>> GetAllTeacherStudents(int? id);
+
+        void AddTeacher(Teacher teacher);
     }
 }

@@ -9,6 +9,7 @@ namespace MySchool.Web.AutoMapper
         public DomainProfile()
         {
             CreateMap<Teacher, TeacherViewModel>().ReverseMap();
+            CreateMap<Teacher, AddTeacherViewModel>().ReverseMap();
         }
     }
 }

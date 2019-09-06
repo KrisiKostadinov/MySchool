@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySchool.Data.Models;
 using MySchool.Web.Managers;
@@ -26,14 +25,15 @@ namespace MySchool.Web.Controllers
             {
                 return RedirectToAction("Home", "Error");
             }
-            var allTeachersDb = await this.teacherManager.GetAll(); //Get all teachers.
 
+            var allTeachersDb = await this.teacherManager.GetAll(); //Get all teachers.
             var allTeachers = new List<TeacherViewModel>();
+
             foreach (var item in allTeachersDb)
             {
                 var allStudentsDb = await GetAllTeacherStudents(item.Id); //We get all students of the current teacher.
-                item.Students = allStudentsDb;
 
+                item.Students = allStudentsDb;
                 allTeachers.Add(mapper.Map<TeacherViewModel>(item)); //Here we map teacher to teacherViewModel with automapper.
             }
             return View(allTeachers); //We return all teachers and their students
@@ -48,5 +48,27 @@ namespace MySchool.Web.Controllers
 
             return await this.teacherManager.GetAllTeacherStudents(id);
         }
+
+        public IActionResult AddTeacher()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddTeacher(AddTeacherViewModel addTeacherViewModel)
+        {
+            if (ModelState.IsValid && User.IsInRole("Director"))
+            {
+                var teacher = mapper.Map<Teacher>(addTeacherViewModel);
+
+                this.teacherManager.AddTeacher(teacher);
+
+                TempData["addedTeacher"] = $"{teacher.Name}";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(addTeacherViewModel);
+        }
+
     }
 }
