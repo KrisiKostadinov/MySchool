@@ -1,0 +1,15 @@
+﻿@model List<TeacherViewModel>
+@{
+    ViewData["Title"] = "AllRatings";
+}
+
+<h4>All teachers</h4>
+<div class="list-group">
+    @foreach (var item in Model)
+    {
+    <div class="list-group-item">
+        <a asp-controller="Teacher" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+    </div>
+    }
+</div>
+

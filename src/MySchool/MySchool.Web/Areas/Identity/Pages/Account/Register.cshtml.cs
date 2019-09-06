@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -78,6 +80,23 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
 
         public void OnGet(string returnUrl = null)
         {
+            var isUser = _userManager.Users.FirstOrDefault();
+            if (isUser == null)
+            {
+                ViewData["Roles"] = new List<string>
+                    {
+                        "Director"
+                    };
+            }
+            else
+            {
+                ViewData["Roles"] = new List<string>
+                    {
+                        "Student",
+                        "Teacher",
+                        "Parent",
+                    };
+            }
             ReturnUrl = returnUrl;
         }
 
@@ -89,36 +108,11 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
                 var user = new MySchoolUser { UserName = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (!await RoleManager.RoleExistsAsync("Student"))
-                {
-                    await RoleManager.CreateAsync(new IdentityRole("Student"));
-                }
-                if (!await RoleManager.RoleExistsAsync("Teacher"))
-                {
-                    await RoleManager.CreateAsync(new IdentityRole("Teacher"));
-                }
-                if (!await RoleManager.RoleExistsAsync("Parent"))
-                {
-                    await RoleManager.CreateAsync(new IdentityRole("Parent"));
-                }
-                Context.SaveChanges();
+                AddRoles(user);
 
-                if (Input.RegisterAs == "Student")
-                {
-                    await _userManager.AddToRoleAsync(user, "Student");
-                }
-                else if (Input.RegisterAs == "Teacher")
-                {
-                    await _userManager.AddToRoleAsync(user, "Teacher");
-                }
-                else if (Input.RegisterAs == "Parent")
-                {
-                    await _userManager.AddToRoleAsync(user, "Parent");
-                }
-
-                Context.SaveChanges();
                 if (result.Succeeded)
                 {
+                    Context.SaveChanges();
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -153,6 +147,42 @@ namespace MySchool.Web.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private async void AddRoles(MySchoolUser user)
+        {
+            if (!await RoleManager.RoleExistsAsync("Student"))
+            {
+                await RoleManager.CreateAsync(new IdentityRole("Student"));
+            }
+            if (!await RoleManager.RoleExistsAsync("Teacher"))
+            {
+                await RoleManager.CreateAsync(new IdentityRole("Teacher"));
+            }
+            if (!await RoleManager.RoleExistsAsync("Parent"))
+            {
+                await RoleManager.CreateAsync(new IdentityRole("Parent"));
+            }
+            if (!await RoleManager.RoleExistsAsync("Director"))
+            {
+                await RoleManager.CreateAsync(new IdentityRole("Director"));
+            }
+            if (Input.RegisterAs == "Student")
+            {
+                await _userManager.AddToRoleAsync(user, "Student");
+            }
+            else if (Input.RegisterAs == "Teacher")
+            {
+                await _userManager.AddToRoleAsync(user, "Teacher");
+            }
+            else if (Input.RegisterAs == "Parent")
+            {
+                await _userManager.AddToRoleAsync(user, "Parent");
+            }
+            else if (Input.RegisterAs == "Director")
+            {
+                await _userManager.AddToRoleAsync(user, "Director");
+            }
         }
     }
 }

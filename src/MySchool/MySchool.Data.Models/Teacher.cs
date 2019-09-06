@@ -12,5 +12,7 @@ namespace MySchool.Data.Models
 
         [NotMapped]
         public ICollection<Student> Students { get; set; }
+
+        public int StudentsCount => this.Students.Count;
     }
 }

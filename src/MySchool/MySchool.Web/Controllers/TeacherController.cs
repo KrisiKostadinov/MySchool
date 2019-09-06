@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySchool.Data.Models;
 using MySchool.Web.Managers;
@@ -14,7 +14,7 @@ namespace MySchool.Web.Controllers
         private ITeacherManager teacherManager;
         private IMapper mapper;
 
-        public TeacherController(ITeacherManager teacherManager, UserManager<MySchoolUser> userManager, IMapper mapper)
+        public TeacherController(ITeacherManager teacherManager, IMapper mapper)
         {
             this.teacherManager = teacherManager;
             this.mapper = mapper;
@@ -22,14 +22,31 @@ namespace MySchool.Web.Controllers
 
         public async Task<IActionResult> AllTeachers()
         {
-            var allTeachersDb = this.teacherManager.GetAll();
+            if (!User.IsInRole("Director"))
+            {
+                return RedirectToAction("Home", "Error");
+            }
+            var allTeachersDb = await this.teacherManager.GetAll(); //Get all teachers.
+
             var allTeachers = new List<TeacherViewModel>();
             foreach (var item in allTeachersDb)
             {
-                allTeachers.Add(mapper.Map<TeacherViewModel>(item));
+                var allStudentsDb = await GetAllTeacherStudents(item.Id); //We get all students of the current teacher.
+                item.Students = allStudentsDb;
+
+                allTeachers.Add(mapper.Map<TeacherViewModel>(item)); //Here we map teacher to teacherViewModel with automapper.
+            }
+            return View(allTeachers); //We return all teachers and their students
+        }
+
+        private async Task<List<Student>> GetAllTeacherStudents(int? id)
+        {
+            if (id == null)
+            {
+                return null;
             }
 
-            return View(allTeachers);
+            return await this.teacherManager.GetAllTeacherStudents(id);
         }
     }
 }

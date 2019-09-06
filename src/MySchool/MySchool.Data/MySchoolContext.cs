@@ -19,5 +19,7 @@ namespace MySchool.Data
         public DbSet<Teacher> Teachers { get; set; }
 
         public DbSet<Student> Students { get; set; }
+
+        public DbSet<StudentTeacher> StudentsTeachers { get; set; }
     }
 }

@@ -31,9 +31,10 @@ namespace MySchool.Web
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<MySchoolUser, IdentityRole<string>>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<MySchoolContext>()
-                .AddDefaultTokenProviders();
+                .AddRoleManager<RoleManager<IdentityRole<string>>>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<MySchoolContext>();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -59,7 +60,7 @@ namespace MySchool.Web
             {
                 using (var context = scope.ServiceProvider.GetService<MySchoolContext>())
                 {
-                    context.Database.Migrate();
+                    context.Database.EnsureCreated();
                 }
             }
             if (env.IsDevelopment())
