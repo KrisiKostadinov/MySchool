@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MySchool.Data.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace MySchool.Data
 {
@@ -14,6 +16,21 @@ namespace MySchool.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+        }
+
+        public override int SaveChanges()
+        {
+            var entities = from e in ChangeTracker.Entries()
+                           where e.State == EntityState.Added
+                               || e.State == EntityState.Modified
+                           select e.Entity;
+            foreach (var entity in entities)
+            {
+                var validationContext = new ValidationContext(entity);
+                Validator.ValidateObject(entity, validationContext);
+            }
+
+            return base.SaveChanges();
         }
 
         public DbSet<Teacher> Teachers { get; set; }

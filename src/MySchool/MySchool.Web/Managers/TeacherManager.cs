@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySchool.Data;
 using MySchool.Data.Models;
+using MySchool.Web.Results;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace MySchool.Web.Managers
         public void AddTeacher(Teacher teacher)
         {
             this.context.Teachers.Add(teacher);
-            this.context.SaveChanges();
+            var result = this.context.SaveChanges();
         }
 
         /// <summary>
@@ -65,6 +66,37 @@ namespace MySchool.Web.Managers
             }
 
             return students;
+        }
+
+        public Task<Teacher> GetTeacherById(int? id)
+        {
+            return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public Task<Teacher> GetTeacher(int? id)
+        {
+            return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        /// <summary>
+        /// Remove teacher.
+        /// </summary>
+        /// <param name="teacher"></param>
+        public async Task<TeacherResult> RemoveTeacher(int? id)
+        {
+            var teacher = await this.context.Teachers.FirstOrDefaultAsync();
+
+            this.context.Remove(teacher);
+            var result = await this.context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return new TeacherResult(true);
+            }
+            else
+            {
+                return new TeacherResult(false);
+            }
         }
     }
 }

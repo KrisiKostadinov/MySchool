@@ -3,13 +3,78 @@
     ViewData["Title"] = "AllRatings";
 }
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <h4>All teachers</h4>
-<div class="list-group">
+@if (TempData["addedTeacher"] != null)
+{
+    <div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Успешно добавихте @TempData["addedTeacher"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+}
+
+<div id="group" class="list-group">
     @foreach (var item in Model)
     {
-    <div class="list-group-item">
-        <a asp-controller="Teacher" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
-    </div>
+        <div class="list-group-item d-flex justify-content-between" id="@item.Id">
+            <a asp-controller="Teacher" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+            <div class="list-group-item d-flex justify-content-between">
+                <a asp-controller="Teacher" asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary mr-4">Виж</a>
+                <button id="@item.Id" href="#" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                    Премахни
+                </button>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModalCenter" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal">Изтрий</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Откажи</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-danger">Потвърждавам</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>
+<div id="numberId"></div>
 
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function () {
+        $('button').click(function (ev) {
+            var targetId = ev.target.id;
+            if (!Number(targetId)) {
+                $.ajax({
+                    url: '/Teacher/RemoveTeacher?id' + targetId,
+                    method: 'POST',
+                    data: { id: $('#numberId').val() },
+                    success: function (removedId) {
+                        $(`#${removedId}`).fadeOut('fast', function () {
+                            $(this).remove();
+                        });
+                    }
+                });
+            }
+            else if (Number(targetId)) {
+                $('#numberId').val(targetId);
+
+                var text = $(`#${targetId}`).children()["0"].innerHTML;
+                $('#modal').text(`Изтрий ${text}`);
+            }
+        });
+    });
+</script>

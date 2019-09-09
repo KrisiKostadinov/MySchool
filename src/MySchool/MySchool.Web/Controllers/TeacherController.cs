@@ -39,6 +39,24 @@ namespace MySchool.Web.Controllers
             return View(allTeachers); //We return all teachers and their students
         }
 
+        public async Task<JsonResult> RemoveTeacher(int? id)
+        {
+            if (id == null)
+            {
+                return new JsonResult("The id not be null.");
+            }
+
+            var result = await this.teacherManager.RemoveTeacher(id);
+            if (result.Succeeded)
+            {
+                return new JsonResult(id);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private async Task<List<Student>> GetAllTeacherStudents(int? id)
         {
             if (id == null)
@@ -54,21 +72,24 @@ namespace MySchool.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Here we add teacher in the db.
+        /// </summary>
+        /// <param name="addTeacherViewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult AddTeacher(AddTeacherViewModel addTeacherViewModel)
         {
             if (ModelState.IsValid && User.IsInRole("Director"))
             {
-                var teacher = mapper.Map<Teacher>(addTeacherViewModel);
+                var teacher = mapper.Map<Teacher>(addTeacherViewModel); // We map addTeacherViewModel to teacher.
 
                 this.teacherManager.AddTeacher(teacher);
+                TempData["addedTeacher"] = $"{teacher.Name}"; // Here save for the name of teacher to we show message in the view.
 
-                TempData["addedTeacher"] = $"{teacher.Name}";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(AllTeachers));
             }
-
             return View(addTeacherViewModel);
         }
-
     }
 }
