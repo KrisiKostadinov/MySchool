@@ -4,7 +4,14 @@
 }
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<h4>All teachers</h4>
+@if (Model.Count == 1)
+{
+    <h4><span class="badge badge-pill badge-primary">@Model.Count Учител</span></h4>
+}
+else if (Model.Count > 1)
+{
+    <h4><span class="badge badge-pill badge-primary">@Model.Count Учители</span></h4>
+}
 @if (TempData["addedTeacher"] != null)
 {
     <div>
@@ -21,7 +28,7 @@
     @foreach (var item in Model)
     {
         <div class="list-group-item d-flex justify-content-between" id="@item.Id">
-            <a asp-controller="Teacher" asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
+            <a asp-controller="Teacher" asp-action="DetailsTeacher" asp-route-id="@item.Id">@item.Name</a>
             <div class="list-group-item d-flex justify-content-between">
                 <a asp-controller="Teacher" asp-action="DetailsTeacher" asp-route-id="@item.Id" class="btn btn-outline-primary mr-4">Виж</a>
                 <button id="@item.Id" href="#" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
@@ -49,25 +56,26 @@
 </div>
 <div id="numberId"></div>
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-        crossorigin="anonymous"></script>
-
 <script>
     $(document).ready(function () {
         $('button').click(function (ev) {
             var targetId = ev.target.id;
             if (!Number(targetId)) {
-                $.ajax({
-                    url: '/Teacher/RemoveTeacher?id' + targetId,
-                    method: 'POST',
-                    data: { id: $('#numberId').val() },
-                    success: function (removedId) {
-                        $(`#${removedId}`).fadeOut('fast', function () {
-                            $(this).remove();
-                        });
-                    }
-                });
+                var textBtn = $(this).text();
+
+                if (textBtn === 'Потвърждавам') {
+                    $.ajax({
+                        url: '/Teacher/RemoveTeacher?id' + targetId,
+                        method: 'POST',
+                        data: { id: $('#numberId').val() },
+                        success: function (removedId) {
+                            $(`#${removedId}`).fadeOut('fast', function () {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                }
+
             }
             else if (Number(targetId)) {
                 $('#numberId').val(targetId);

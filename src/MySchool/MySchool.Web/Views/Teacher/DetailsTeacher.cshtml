@@ -20,6 +20,13 @@
                 </tr>
             </tbody>
         </table>
+        @if (Model.Students.Count == 0)
+        {
+            <div>
+                <a asp-controller="Teacher" asp-action="AllTeachers" class="btn btn-danger">Назад</a>
+            </div>
+            return;
+        }
         <div class="collapse" id="students">
             <table class="table">
                 <thead class="thead-light">
@@ -49,10 +56,24 @@
             </table>
         </div>
         <div class="row">
-            <h4><button class="badge badge-primary btn btn-primary m-3" type="button" data-toggle="collapse" data-target="#students" aria-expanded="false" aria-controls="students">Виж всички ученици</button></h4>
+            <h4><button id="studentsBtn" class="badge badge-primary btn btn-primary m-3" type="button" data-toggle="collapse" data-target="#students" aria-expanded="false" aria-controls="students">Виж всички ученици</button></h4>
         </div>
         <div>
             <a asp-controller="Teacher" asp-action="AllTeachers" class="btn btn-danger">Назад</a>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#studentsBtn').click(function () {
+            var textBtn = $(this).text();
+            if (textBtn === 'Виж всички ученици') {
+                $(this).text('Скрий');
+            }
+            else {
+                $(this).text('Виж всички ученици');
+            }
+        });
+    });
+</script>
