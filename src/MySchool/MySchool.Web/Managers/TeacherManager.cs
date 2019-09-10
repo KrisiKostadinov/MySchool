@@ -98,5 +98,34 @@ namespace MySchool.Web.Managers
                 return new TeacherResult(false);
             }
         }
+
+        public Task<Teacher> DetailsTeacher(int? id)
+        {
+            return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<List<Rating>> GetRatingsOfStudentById(int? id)
+        {
+            var studentRatings = await this.context.Ratings.Where(s => s.StudentId == id).ToListAsync();
+            return studentRatings;
+        }
+
+        public async Task<double> AverageRatingNumberFromEverySubjectsById(int? id)
+        {
+            var ratingNumbers = await this.context
+                .Ratings
+                .Where(s => s.StudentId == id)
+                .Select(r => r.RatingNumber)
+                .ToListAsync();
+            if (ratingNumbers.Count == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                var averageRatingNumber = ratingNumbers.Average();
+                return averageRatingNumber;
+            }
+        }
     }
 }

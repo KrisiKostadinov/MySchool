@@ -1,0 +1,58 @@
+﻿@model MySchool.Web.Models.TeacherViewModel
+
+<div class="container-fluid">
+    <div class="col-12">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">@Html.DisplayNameFor(model => model.Name)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.StudentsCount)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.City)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">@Html.DisplayFor(model => model.Name)</th>
+                    <td>@Html.DisplayFor(model => model.PhoneNumber)</td>
+                    <td>@Html.DisplayFor(model => model.StudentsCount)</td>
+                    <td>@Html.DisplayFor(model => model.City)</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="collapse" id="students">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">@Html.DisplayNameFor(model => model.Name)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.City)</th>
+                        <th scope="col">Среден успех от всички предмети</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Students)
+                    {
+                        <tr>
+                            <th scope="col">@item.Name</th>
+                            <td>@item.City</td>
+                            @if (@item.AverageRatingNumberFromEverySubjects == 0)
+                            {
+                                <td>Няма оценки</td>
+                            }
+                            else
+                            {
+                                <td>@item.AverageRatingNumberFromEverySubjects</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <h4><button class="badge badge-primary btn btn-primary m-3" type="button" data-toggle="collapse" data-target="#students" aria-expanded="false" aria-controls="students">Виж всички ученици</button></h4>
+        </div>
+        <div>
+            <a asp-controller="Teacher" asp-action="AllTeachers" class="btn btn-danger">Назад</a>
+        </div>
+    </div>
+</div>

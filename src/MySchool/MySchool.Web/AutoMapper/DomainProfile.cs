@@ -10,6 +10,7 @@ namespace MySchool.Web.AutoMapper
         {
             CreateMap<Teacher, TeacherViewModel>().ReverseMap();
             CreateMap<Teacher, AddTeacherViewModel>().ReverseMap();
+            CreateMap<Teacher, TeacherViewModel>().ReverseMap();
         }
     }
 }

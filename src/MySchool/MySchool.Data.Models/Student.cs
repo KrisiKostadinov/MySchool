@@ -19,5 +19,10 @@ namespace MySchool.Data.Models
 
         [NotMapped]
         public Parent Parent { get; set; }
+
+        public List<Rating> Ratings { get; set; }
+
+        [NotMapped]
+        public double AverageRatingNumberFromEverySubjects { get; set; }
     }
 }

@@ -91,5 +91,23 @@ namespace MySchool.Web.Controllers
             }
             return View(addTeacherViewModel);
         }
+        public async Task<IActionResult> DetailsTeacher(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction();
+            }
+            var teacher = await this.teacherManager.DetailsTeacher(id);
+            var teacherViewModel = mapper.Map<TeacherViewModel>(teacher);
+            var studentsOfTeacher = await this.GetAllTeacherStudents(id);
+
+            foreach (var item in studentsOfTeacher)
+            {
+                var ratingsOfStudent = await this.teacherManager.GetRatingsOfStudentById(item.Id);
+                item.AverageRatingNumberFromEverySubjects = await this.teacherManager.AverageRatingNumberFromEverySubjectsById(item.Id);
+            }
+            teacherViewModel.Students = studentsOfTeacher;
+            return View(teacherViewModel);
+        }
     }
 }

@@ -38,5 +38,7 @@ namespace MySchool.Data
         public DbSet<Student> Students { get; set; }
 
         public DbSet<StudentTeacher> StudentsTeachers { get; set; }
+
+        public DbSet<Rating> Ratings { get; set; }
     }
 }
