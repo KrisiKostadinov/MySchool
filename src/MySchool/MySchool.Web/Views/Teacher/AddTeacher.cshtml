@@ -20,9 +20,27 @@
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" autocomplete="off" autofocus />
             </div>
-            <div class="form-group" id="datetimepicker2">
-                <label asp-for="Birthday" class="control-label"></label>
-                <input asp-for="Birthday" type="text" class="form-control" autocomplete="off" autofocus />
+            <div class="form-group">
+                <div class="d-flex justify-content-between">
+                    <select asp-for="BirthDay" class="dropdown-header rounded">
+                        @for (int i = 1; i <= 31; i++)
+                        {
+                            <option value="@i">@i д.</option>
+                        }
+                    </select>
+                    <select asp-for="BirthMonth" class="dropdown-header rounded">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">@i м.</option>
+                        }
+                    </select>
+                    <select asp-for="BirthYear" class="dropdown-header rounded">
+                        @for (int i = DateTime.Now.Year; i >= 1920; i--)
+                        {
+                            <option value="@i">@i г.</option>
+                        }
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="City" class="control-label"></label>
@@ -30,13 +48,8 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Добави" class="btn btn-primary" />
-                <a asp-controller="Home" asp-action="Index" class="btn btn-danger">Откажи</a>
+                <a asp-controller="Teacher" asp-action="AllTeachers" class="btn btn-danger">Откажи</a>
             </div>
         </form>
     </div>
 </div>
-<script>
-    $('#datepicker').datepicker({
-        format: 'dd/mm/yyyy'
-    });
-</script>

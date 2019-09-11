@@ -14,8 +14,22 @@
             <tbody>
                 <tr>
                     <th scope="row">@Html.DisplayFor(model => model.Name)</th>
-                    <td>@Html.DisplayFor(model => model.PhoneNumber)</td>
-                    <td>@Html.DisplayFor(model => model.StudentsCount)</td>
+                    @if (Model.PhoneNumber == null)
+                    {
+                        <td>Няма</td>
+                    }
+                    else
+                    {
+                        <td>@Html.DisplayFor(model => model.PhoneNumber)</td>
+                    }
+                    @if (Model.StudentsCount == 0)
+                    {
+                        <td>Няма</td>
+                    }
+                    else
+                    {
+                        <td>@Html.DisplayFor(model => model.StudentsCount)</td>
+                    }
                     <td>@Html.DisplayFor(model => model.City)</td>
                 </tr>
             </tbody>

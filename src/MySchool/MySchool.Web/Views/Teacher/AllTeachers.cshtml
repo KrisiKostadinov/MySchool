@@ -4,18 +4,24 @@
 }
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-@if (Model.Count == 1)
-{
-    <h4><span class="badge badge-pill badge-primary">@Model.Count Учител</span></h4>
-}
-else if (Model.Count > 1)
-{
-    <h4><span class="badge badge-pill badge-primary">@Model.Count Учители</span></h4>
-}
-else
-{
-    <h4><span class="badge badge-pill badge-primary">Няма учители</span></h4>
-}
+<div class="col-4 pb-2">
+    <div class="d-flex justify-content-between">
+        @if (Model.Count == 1)
+        {
+            <h4><span class="badge badge-pill badge-primary">@Model.Count Учител</span></h4>
+        }
+        else if (Model.Count > 1)
+        {
+            <h4><span class="badge badge-pill badge-primary">@Model.Count Учители</span></h4>
+        }
+        else if (Model.Count == 0)
+        {
+            <h4><span class="badge badge-pill badge-primary">Няма учители</span></h4>
+        }
+        <a asp-controller="Teacher" asp-action="AddTeacher" class="btn btn-success">Нов учител</a>
+    </div>
+</div>
+
 @if (TempData["addedTeacher"] != null)
 {
     <div>
