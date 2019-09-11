@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MySchool.Data;
 using MySchool.Data.Models;
 using MySchool.Web.Results;
@@ -10,14 +11,16 @@ namespace MySchool.Web.Managers
 {
     public class TeacherManager : ITeacherManager
     {
+        private IMapper mapper;
         /// <summary>
         /// Here we get the db context to get access to the db.
         /// </summary>
         private MySchoolContext context;
 
-        public TeacherManager(MySchoolContext context)
+        public TeacherManager(MySchoolContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -68,11 +71,21 @@ namespace MySchool.Web.Managers
             return students;
         }
 
+        /// <summary>
+        /// Here we get teacher by his id from db.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Task<Teacher> GetTeacherById(int? id)
         {
             return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        /// <summary>
+        /// Here we remove teacher by his id from db.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Task<Teacher> GetTeacher(int? id)
         {
             return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
@@ -99,6 +112,11 @@ namespace MySchool.Web.Managers
             }
         }
 
+        /// <summary>
+        /// Here we get teacher by id from db to we show details for it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Task<Teacher> DetailsTeacher(int? id)
         {
             return this.context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
@@ -110,6 +128,11 @@ namespace MySchool.Web.Managers
             return studentRatings;
         }
 
+        /// <summary>
+        /// Here we calculate average rating of student by his id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<double> AverageRatingNumberFromEverySubjectsById(int? id)
         {
             var ratingNumbers = await this.context
@@ -126,6 +149,69 @@ namespace MySchool.Web.Managers
                 var averageRatingNumber = ratingNumbers.Average();
                 return averageRatingNumber;
             }
+        }
+
+        /// <summary>
+        /// Here we adds student to teacher by his id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<TeacherResult> AddStudentToTeacherById(int? id)
+        {
+            var student = mapper.Map<StudentTeacher>(await this.context.Students.FirstOrDefaultAsync(s => s.Id == id));
+            await this.context.StudentsTeachers.AddAsync(student);
+
+            var result = await this.context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return new TeacherResult(true);
+            }
+            else
+            {
+                return new TeacherResult(false);
+            }
+        }
+
+        /// <summary>
+        /// Here we add student to db.
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        public async Task<StudentResult> AddStudent(Student student)
+        {
+            await this.context.Students.AddAsync(student);
+
+            var result = await this.context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return new StudentResult(true);
+            }
+            else
+            {
+                return new StudentResult(false);
+            }
+        }
+
+        /// <summary>
+        /// Here we get all students from db.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Student>> GetAllStudents()
+        {
+            var students = await this.context.Students.ToListAsync();
+            return students;
+        }
+
+        /// <summary>
+        /// Here we get student by his id for to we show details for it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Student> StudentDetailsById(int? id)
+        {
+            var student = await this.context.Students.FirstOrDefaultAsync(s => s.Id == id);
+            return student;
         }
     }
 }

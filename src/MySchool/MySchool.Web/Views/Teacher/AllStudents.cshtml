@@ -1,0 +1,171 @@
+﻿@model IEnumerable<MySchool.Web.Models.StudentViewModel>
+
+@{
+    ViewData["Title"] = "AllStudents";
+}
+
+<div class="col-4">
+    <div class="d-flex justify-content-between">
+        <h4><span class="badge badge-pill badge-primary">AllStudents</span></h4>
+        <a asp-controller="Teacher" asp-action="AddStudent" class="btn btn-success">Нов ученик</a>
+    </div>
+</div>
+
+<table class="table table-secondary table-hover mt-4 table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BirthYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BirthMonth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BirthDay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TeachersCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AverageRatingNumberFromEverySubjects)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="clickable-row" id="@item.Id">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BirthYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BirthMonth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BirthDay)
+                </td>
+                <td>
+                    @if (item.PhoneNumber == null)
+                    {
+                        <span>Няма</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @if (item.TeachersCount == 0)
+                    {
+                        <span>Няма</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.TeachersCount)
+                    }
+                </td>
+                <td>
+                    @if (item.AverageRatingNumberFromEverySubjects == 0)
+                    {
+                        <span>Няма</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.AverageRatingNumberFromEverySubjects)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="col-sm-6">
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="student">
+            <span class="first font-weight-bold">Име: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="year">
+            <span class="first font-weight-bold">Година: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="month">
+            <span class="first font-weight-bold">Месец: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="day">
+            <span class="first font-weight-bold">Ден: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="phoneNumber">
+            <span class="first font-weight-bold">Телефон: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="city">
+            <span class="first font-weight-bold">Град: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="teachers">
+            <span class="first font-weight-bold">Учители: </span>
+            <span></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="AR">
+            <span class="first font-weight-bold">Средна оценка: </span>
+            <span></span>
+        </li>
+    </ul>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".clickable-row").click(function (event) {
+            var id = $(this)["0"].id;
+
+            $.ajax({
+                method: 'POST',
+                url: '/Teacher/StudentDetails?' + id,
+                data: { id: id },
+                success: function (res) {
+                    $('#student span:last-child').text(res.name);
+                    $('#year span:last-child').text(res.birthYear);
+                    $('#month span:last-child').text(res.birthMonth);
+                    $('#day span:last-child').text(res.birthDay);
+                    if (res.phoneNumber === null) {
+                        $('#phoneNumber span:last-child').text('Няма');
+                    }
+                    else {
+                        $('#phoneNumber span:last-child').text(res.phoneNumber);
+                    }
+                    $('#city span:last-child').text(res.city);
+                    if (res.teachersCount === 0) {
+                        $('#teachers span:last-child').text('Няма');
+                    }
+                    else {
+                        $('#teachers span:last-child').text(res.teachersCount);
+                    }
+                    if (res.averageRatingNumberFromEverySubjects === 0) {
+                        $('#AR span:last-child').text('Няма');
+                    }
+                    else {
+                        $('#AR span:last-child').text(res.averageRatingNumberFromEverySubjects);
+                    }
+                }
+            });
+        });
+    });
+</script>

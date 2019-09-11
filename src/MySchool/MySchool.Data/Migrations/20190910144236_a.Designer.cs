@@ -10,8 +10,8 @@ using MySchool.Data;
 namespace MySchool.Data.Migrations
 {
     [DbContext(typeof(MySchoolContext))]
-    [Migration("20190910083012_AddRatings")]
-    partial class AddRatings
+    [Migration("20190910144236_a")]
+    partial class a
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -204,6 +204,8 @@ namespace MySchool.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StudentId");
+
                     b.ToTable("Ratings");
                 });
 
@@ -212,8 +214,6 @@ namespace MySchool.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Birthday");
 
                     b.Property<string>("City");
 
@@ -248,8 +248,6 @@ namespace MySchool.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Birthday");
 
                     b.Property<string>("City");
 
@@ -311,6 +309,14 @@ namespace MySchool.Data.Migrations
                     b.HasOne("MySchool.Data.Models.MySchoolUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MySchool.Data.Models.Rating", b =>
+                {
+                    b.HasOne("MySchool.Data.Models.Student")
+                        .WithMany("Ratings")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

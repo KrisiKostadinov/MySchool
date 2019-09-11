@@ -9,7 +9,11 @@ namespace MySchool.Data.Models
 
         public string Name { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public int BirthYear { get; set; }
+
+        public int BirthMonth { get; set; }
+
+        public int BirthDay { get; set; }
 
         public string PhoneNumber { get; set; }
 

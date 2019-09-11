@@ -12,6 +12,10 @@ else if (Model.Count > 1)
 {
     <h4><span class="badge badge-pill badge-primary">@Model.Count Учители</span></h4>
 }
+else
+{
+    <h4><span class="badge badge-pill badge-primary">Няма учители</span></h4>
+}
 @if (TempData["addedTeacher"] != null)
 {
     <div>

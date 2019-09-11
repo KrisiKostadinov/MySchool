@@ -24,5 +24,13 @@ namespace MySchool.Web.Managers
         Task<List<Rating>> GetRatingsOfStudentById(int? id);
 
         Task<double> AverageRatingNumberFromEverySubjectsById(int? id);
+
+        Task<TeacherResult> AddStudentToTeacherById(int? id);
+
+        Task<StudentResult> AddStudent(Student student);
+
+        Task<List<Student>> GetAllStudents();
+
+        Task<Student> StudentDetailsById(int? id);
     }
 }

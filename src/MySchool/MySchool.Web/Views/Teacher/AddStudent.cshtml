@@ -1,0 +1,64 @@
+﻿@model MySchool.Web.Models.StudentViewModel
+
+@{
+    ViewData["Title"] = "AddStudent";
+}
+
+<h4><span class="badge badge-pill badge-primary">Нов ученик</span></h4>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddStudent" novalidate class="needs-validation">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" autocomplete="off" required minlength="3" />
+                <span asp-validation-for="Name" class="text-danger invalid-feedback">Това поле е задължително.</span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" required minlength="3" autocomplete="off" />
+                <span asp-validation-for="City" class="text-danger invalid-feedback">Това поле е задължително.</span>
+            </div>
+            <div class="form-group">
+                <div class="d-flex justify-content-between">
+                    <select asp-for="BirthDay" class="dropdown-header rounded">
+                        @for (int i = 1; i <= 31; i++)
+                        {
+                            <option value="@i">@i д.</option>
+                        }
+                    </select>
+                    <select asp-for="BirthMonth" class="dropdown-header rounded">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">@i м.</option>
+                        }
+                    </select>
+                    <select asp-for="BirthYear" class="dropdown-header rounded">
+                        @for (int i = DateTime.Now.Year; i >= 1920; i--)
+                        {
+                            <option value="@i">@i г.</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Добави" class="btn btn-primary" />
+                <a asp-controller="Home" asp-action="Index" class="btn btn-danger">Откажи</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var form = document.querySelector('.needs-validation');
+
+    form.addEventListener('submit', function (event) {
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+
+</script>
