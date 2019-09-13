@@ -8,7 +8,7 @@ namespace MySchool.Web.Models
     {
         public int Id { get; set; }
 
-        [Display(Name = "Име")]
+        [Display(Name = "Име:")]
         public string Name { get; set; }
 
         [Display(Name = "Година")]
@@ -20,10 +20,10 @@ namespace MySchool.Web.Models
         [Display(Name = "Ден")]
         public int BirthDay { get; set; }
 
-        [Display(Name = "Телефон")]
+        [Display(Name = "Телефон:")]
         public string PhoneNumber { get; set; }
 
-        [Display(Name = "Град")]
+        [Display(Name = "Град:")]
         public string City { get; set; }
 
         public ICollection<Teacher> Teachers { get; set; }
@@ -37,7 +37,7 @@ namespace MySchool.Web.Models
 
         public List<Rating> Ratings { get; set; }
 
-        [Display(Name = "Средна оценка")]
+        [Display(Name = "Оценка")]
         public double AverageRatingNumberFromEverySubjects { get; set; }
     }
 }

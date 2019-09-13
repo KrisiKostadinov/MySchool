@@ -8,12 +8,12 @@ namespace MySchool.Data.Models
         [Key]
         public int Id { get; set; }
 
-        public int StudentId { get; set; }
+        public int? StudentId { get; set; }
 
         [NotMapped]
         public Student Student { get; set; }
 
-        public int TeacherId { get; set; }
+        public int? TeacherId { get; set; }
 
         [NotMapped]
         public Teacher Teacher { get; set; }

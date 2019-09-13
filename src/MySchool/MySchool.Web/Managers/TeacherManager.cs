@@ -156,12 +156,16 @@ namespace MySchool.Web.Managers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<TeacherResult> AddStudentToTeacherById(int? id)
+        public async Task<TeacherResult> AddStudentToTeacherById(int? id, int? teacherId)
         {
-            var student = mapper.Map<StudentTeacher>(await this.context.Students.FirstOrDefaultAsync(s => s.Id == id));
-            await this.context.StudentsTeachers.AddAsync(student);
+            var studentTeacher = new StudentTeacher();
+            studentTeacher.StudentId = id;
 
+            studentTeacher.TeacherId = teacherId;
+
+            await this.context.StudentsTeachers.AddAsync(studentTeacher);
             var result = await this.context.SaveChangesAsync();
+
             if (result > 0)
             {
                 return new TeacherResult(true);
@@ -212,6 +216,12 @@ namespace MySchool.Web.Managers
         {
             var student = await this.context.Students.FirstOrDefaultAsync(s => s.Id == id);
             return student;
+        }
+
+        public async Task<List<int>> GetAddedTeachersToStudent(int? id)
+        {
+            var teacherIds = await this.context.StudentsTeachers.Where(t => t.StudentId == id).Select(t => t.Id).ToListAsync();
+            return teacherIds;
         }
     }
 }

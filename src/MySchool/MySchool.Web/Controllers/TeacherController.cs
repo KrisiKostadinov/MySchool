@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using HandlebarsDotNet;
 using Microsoft.AspNetCore.Mvc;
 using MySchool.Data.Models;
 using MySchool.Web.Managers;
 using MySchool.Web.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MySchool.Web.Controllers
@@ -140,7 +142,7 @@ namespace MySchool.Web.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(AllTeachers));
+                return RedirectToAction(nameof(AllStudents));
             }
             else
             {
@@ -182,23 +184,80 @@ namespace MySchool.Web.Controllers
             return studentViewModel;
         }
 
-        //public async Task<JsonResult> AddStudentToTeacher(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new JsonResult("The id not be null.");
-        //    }
+        public async Task<JsonResult> AddStudentToTeacher(int? id, int? teacherId)
+        {
+            if (id == null || teacherId == null)
+            {
+                return new JsonResult("The id not be null.");
+            }
 
-        //    var result = await this.teacherManager.AddStudentToTeacherById(id);
+            var result = await this.teacherManager.AddStudentToTeacherById(id, teacherId);
 
-        //    if (result.Succeeded)
-        //    {
-        //        return new JsonResult("Succeeded");
-        //    }
-        //    else
-        //    {
-        //        return new JsonResult("Error");
-        //    }
-        //}
+            if (result.Succeeded)
+            {
+                return new JsonResult("Succeeded");
+            }
+            else
+            {
+                return new JsonResult("Error");
+            }
+        }
+
+        public async Task<string> GetAllTeachers(int? id)
+        {
+            var teachers = await this.teacherManager.GetAll();
+            var teacherViewModels = new List<TeacherViewModel>();
+
+            foreach (var item in teachers)
+            {
+                teacherViewModels.Add(mapper.Map<TeacherViewModel>(item));
+            }
+            var readData = "";
+            using (var stream = new StreamReader(@"C:\Users\ASER\Desktop\MySchool\src\MySchool\MySchool.Web\Views\Teacher\teachers.cshtml"))
+            {
+                readData = await stream.ReadToEndAsync();
+            }
+            string source = readData;
+
+            var template = Handlebars.Compile(source);
+
+            var data = new
+            {
+                array = new
+                {
+                    teachers = new List<object>(),
+                    student = this.teacherManager.StudentDetailsById(id).Result.Name,
+                    id = id,
+                    teacherId = 0,
+                    addedTeacher = ""
+                }
+            };
+
+            var addedTeachers = await this.teacherManager.GetAddedTeachersToStudent(id);
+            foreach (var item in teacherViewModels)
+            {
+                var isAdded = "";
+                if (addedTeachers.Contains(item.Id))
+                {
+                    isAdded = "added";
+                }
+                else
+                {
+                    isAdded = "notadded";
+                }
+
+                data.array.teachers.Add(new
+                {
+                    teacher = item.Name,
+                    city = item.City,
+                    teacherId = item.Id,
+                    addedTeacher = isAdded
+                });
+            }
+            var result = template(data);
+
+            return result;
+        }
+
     }
 }

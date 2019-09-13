@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<table class="table table-secondary table-hover mt-4 table-bordered">
+<table class="table table-secondary table-hover mt-4 table-bordered table-dark text-center text-white">
     <thead>
         <tr>
             <th>
@@ -37,6 +37,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.AverageRatingNumberFromEverySubjects)
+            </th>
+            <th>
+                Опции
             </th>
         </tr>
     </thead>
@@ -89,6 +92,11 @@
                         @Html.DisplayFor(modelItem => item.AverageRatingNumberFromEverySubjects)
                     }
                 </td>
+                <td class="d-flex justify-content-lg-around">
+                    <button class="btn btn-success addTeachers" id="@item.Id" value="Учител" data-toggle="modal" data-target="#showTeachers">Учител</button>
+                    <button class="btn btn-outline-info">Обнови</button>
+                    <button class="btn btn-outline-danger">Изтрий</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -101,7 +109,7 @@
                 <span class="first font-weight-bold">Име: </span>
                 <span></span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center" id="year">
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-light" id="year">
                 <span class="first font-weight-bold">Година: </span>
                 <span></span>
             </li>
@@ -109,7 +117,7 @@
                 <span class="first font-weight-bold">Месец: </span>
                 <span></span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center" id="day">
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-light" id="day">
                 <span class="first font-weight-bold">Ден: </span>
                 <span></span>
             </li>
@@ -117,7 +125,7 @@
                 <span class="first font-weight-bold">Телефон: </span>
                 <span></span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center" id="city">
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-light" id="city">
                 <span class="first font-weight-bold">Град: </span>
                 <span></span>
             </li>
@@ -125,8 +133,8 @@
                 <span class="first font-weight-bold">Учители: </span>
                 <span></span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center" id="AR">
-                <span class="first font-weight-bold">Средна оценка: </span>
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-light" id="AR">
+                <span class="first font-weight-bold">Оценка</span>
                 <span></span>
             </li>
         </ul>
@@ -134,8 +142,35 @@
 </div>
 
 <button id="button" class="btn btn-outline-info m-3">Покажи пълната информация</button>
+
+<div class="modal fade" id="showTeachers" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body">
+                    <ul id="listTeachers" class="p-0">
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Затвори</button>
+                </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
+        $('.addTeachers').click('click', function () {
+            var id = $(this)["0"].id;
+            $.ajax({
+                method: 'GET',
+                url: '/Teacher/GetAllTeachers?id=' + id,
+                success: function (data) {
+                    $('#listTeachers').text('');
+                    $('#listTeachers').append(`${data}`);
+                }
+            });
+        });
         $('#button').click(function () {
             if ($(this).text() === 'Покажи пълната информация') {
                 $('#data').slideDown();

@@ -1,5 +1,4 @@
 ﻿using MySchool.Data.Models;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,8 +11,14 @@ namespace MySchool.Web.Models
         [Display(Name = "Име")]
         public string Name { get; set; }
 
-        [Display(Name = "Рожденна дата")]
-        public DateTime Birthday { get; set; }
+        [Display(Name = "Година:")]
+        public int BirthYear { get; set; }
+
+        [Display(Name = "Месец:")]
+        public int BirthMonth { get; set; }
+
+        [Display(Name = "Ден:")]
+        public int BirthDay { get; set; }
 
         [Display(Name = "Мобилен номер")]
         public string PhoneNumber { get; set; }
