@@ -12,6 +12,8 @@ using MySchool.Data.Models;
 using MySchool.Web.Managers;
 using AutoMapper;
 using System;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace MySchool.Web
 {
@@ -56,6 +58,14 @@ namespace MySchool.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
+            ,
+                RequestPath = new PathString("/wwwroot")
+            });
             using (IServiceScope scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 using (var context = scope.ServiceProvider.GetService<MySchoolContext>())

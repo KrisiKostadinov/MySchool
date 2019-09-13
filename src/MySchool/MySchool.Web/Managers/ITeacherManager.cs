@@ -34,5 +34,9 @@ namespace MySchool.Web.Managers
         Task<Student> StudentDetailsById(int? id);
 
         Task<List<int>> GetAddedTeachersToStudent(int? id);
+
+        Task<bool> CheckIfIsExists(int? id, int? teacherId);
+
+        Task<List<Student>> GetAllStudentsOfTeacher(int? id);
     }
 }

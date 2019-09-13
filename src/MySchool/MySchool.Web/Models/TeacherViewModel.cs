@@ -30,5 +30,7 @@ namespace MySchool.Web.Models
 
         [Display(Name = "Ученици")]
         public int StudentsCount => this.Students.Count;
+
+        public bool Exists { get; set; }
     }
 }

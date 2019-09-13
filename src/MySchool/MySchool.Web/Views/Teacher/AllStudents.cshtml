@@ -162,12 +162,14 @@
     $(document).ready(function () {
         $('.addTeachers').click('click', function () {
             var id = $(this)["0"].id;
+
             $.ajax({
                 method: 'GET',
                 url: '/Teacher/GetAllTeachers?id=' + id,
                 success: function (data) {
                     $('#listTeachers').text('');
                     $('#listTeachers').append(`${data}`);
+                    $(this)["0"].id = null;
                 }
             });
         });

@@ -1,0 +1,79 @@
+﻿@model IEnumerable<MySchool.Web.Models.TeacherViewModel>
+
+@{
+    Layout = null;
+}
+<link href="~/css/getAllTeachers.css" rel="stylesheet" />
+<h4 class="text-center">Изберете учители за - @ViewData["Student"]</h4>
+
+<div class="list">
+    @foreach (var item in Model)
+    {
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @item.Name
+                <div class="list-group-item col-lg-6 d-flex justify-content-around align-items-center">
+                    <span class="badge badge-primary badge-pill">@item.StudentsCount</span>
+                    @if (!item.Exists)
+                    {
+                        <button class="addedBtn btn btn-primary" id="@item.Id">Добави</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger" disabled>Добавен</button>
+                    }
+                    <div id="snackbar">Добавен успешно!</div>
+                </div>
+            </li>
+        </ul>
+    }
+</div>
+
+<div class="studentId" id="@ViewData["StudentId"]"></div>
+
+<script>
+    function addedSucceeded() {
+        var x = document.getElementById("snackbar");
+        x.className = "show";
+        setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    }
+    $(document).ready(function () {
+        $(document).click(function () {
+            if (!$('#showTeachers').is(':visible')) {
+                clearInfo();
+            }
+        });
+        $('.addedBtn').click(function (event) {
+            var btn = $(this);
+
+            var teacherId = $(this)["0"].id;
+            var id = $(".studentId")["0"].id;
+            $.ajax({
+                method: 'POST',
+                url: '/Teacher/AddStudentToTeacher',
+                data: {
+                    id: id,
+                    teacherId: teacherId
+                },
+                success: function (data) {
+                    if (data === 'Succeeded') {
+                        $('.toast').toast('show');
+                        console.log(data);
+                        addedSucceeded();
+                        btn["0"].innerText = 'Добавен';
+                        btn["0"].className = 'btn btn-danger';
+                        btn["0"].disabled = true;
+                    }
+                    else if (data === 'exsits') {
+                        console.log(data);
+                        clearInfo();
+                    }
+                }
+            });
+        });
+        function clearInfo() {
+            $(this)["0"].id = null;
+            $(".studentId")["0"].id = null;
+        }
+    });
+</script>

@@ -184,6 +184,12 @@ namespace MySchool.Web.Controllers
             return studentViewModel;
         }
 
+        /// <summary>
+        /// Here we add student to teacher by their ids.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="teacherId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddStudentToTeacher(int? id, int? teacherId)
         {
             if (id == null || teacherId == null)
@@ -191,73 +197,60 @@ namespace MySchool.Web.Controllers
                 return new JsonResult("The id not be null.");
             }
 
-            var result = await this.teacherManager.AddStudentToTeacherById(id, teacherId);
+            var isExists = await this.teacherManager.CheckIfIsExists(id, teacherId);
 
-            if (result.Succeeded)
+            if (!isExists)
             {
-                return new JsonResult("Succeeded");
-            }
-            else
-            {
-                return new JsonResult("Error");
-            }
-        }
-
-        public async Task<string> GetAllTeachers(int? id)
-        {
-            var teachers = await this.teacherManager.GetAll();
-            var teacherViewModels = new List<TeacherViewModel>();
-
-            foreach (var item in teachers)
-            {
-                teacherViewModels.Add(mapper.Map<TeacherViewModel>(item));
-            }
-            var readData = "";
-            using (var stream = new StreamReader(@"C:\Users\ASER\Desktop\MySchool\src\MySchool\MySchool.Web\Views\Teacher\teachers.cshtml"))
-            {
-                readData = await stream.ReadToEndAsync();
-            }
-            string source = readData;
-
-            var template = Handlebars.Compile(source);
-
-            var data = new
-            {
-                array = new
+                var result = await this.teacherManager.AddStudentToTeacherById(id, teacherId);
+                if (result.Succeeded)
                 {
-                    teachers = new List<object>(),
-                    student = this.teacherManager.StudentDetailsById(id).Result.Name,
-                    id = id,
-                    teacherId = 0,
-                    addedTeacher = ""
-                }
-            };
-
-            var addedTeachers = await this.teacherManager.GetAddedTeachersToStudent(id);
-            foreach (var item in teacherViewModels)
-            {
-                var isAdded = "";
-                if (addedTeachers.Contains(item.Id))
-                {
-                    isAdded = "added";
+                    return new JsonResult("Succeeded");
                 }
                 else
                 {
-                    isAdded = "notadded";
+                    return new JsonResult("Error");
                 }
-
-                data.array.teachers.Add(new
-                {
-                    teacher = item.Name,
-                    city = item.City,
-                    teacherId = item.Id,
-                    addedTeacher = isAdded
-                });
             }
-            var result = template(data);
+            else
+            {
+                return new JsonResult("exsits");
+            }
 
-            return result;
         }
 
+        /// <summary>
+        /// Here we get all teachers for to show in the partial view.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetAllTeachers(int? id)
+        {
+            var teachers = await this.teacherManager.GetAll();
+
+            var teacherViewModels = new List<TeacherViewModel>();
+            ViewData["studentId"] = id;
+
+            ViewData["Student"] = this.teacherManager.StudentDetailsById(id).Result.Name;
+
+            foreach (var item in teachers)
+            {
+                var teacherViewModel = mapper.Map<TeacherViewModel>(item);
+                teacherViewModel.Students = await this.teacherManager.GetAllStudentsOfTeacher(item.Id);
+
+                teacherViewModels.Add(teacherViewModel);
+                var result = await this.teacherManager.CheckIfIsExists(id, item.Id);
+
+                if (!result)
+                {
+                    teacherViewModel.Exists = result;
+                }
+                else
+                {
+                    teacherViewModel.Exists = result;
+                }
+            }
+
+            return PartialView(teacherViewModels);
+        }
     }
 }

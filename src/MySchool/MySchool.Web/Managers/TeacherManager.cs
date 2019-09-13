@@ -218,10 +218,54 @@ namespace MySchool.Web.Managers
             return student;
         }
 
+        /// <summary>
+        /// Here we get all teachers of student by the his id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<List<int>> GetAddedTeachersToStudent(int? id)
         {
             var teacherIds = await this.context.StudentsTeachers.Where(t => t.StudentId == id).Select(t => t.Id).ToListAsync();
             return teacherIds;
+        }
+
+        /// <summary>
+        /// Here we check if teacher have student by student Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="teacherId"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckIfIsExists(int? id, int? teacherId)
+        {
+            var exsits = await this.context.StudentsTeachers.FirstOrDefaultAsync(s => s.StudentId == id && s.TeacherId == teacherId);
+            if (exsits == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Here we get all students of teacher by his id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Student>> GetAllStudentsOfTeacher(int? id)
+        {
+            var studentIds = await this.context.StudentsTeachers.Where(t => t.TeacherId == id).Select(t => t.StudentId).ToListAsync();
+
+            var studentsOfTeacher = new List<Student>();
+
+            foreach (var item in studentIds)
+            {
+                var student = await this.context.Students.FirstOrDefaultAsync(s => s.Id == item);
+                studentsOfTeacher.Add(student);
+            }
+
+            return studentsOfTeacher;
         }
     }
 }
